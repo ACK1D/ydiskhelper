@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <form method="post" action="{% url 'multi_download' %}">
+        {% csrf_token %}
+        <input type="hidden" name="public_key" value="{{ public_key }}">
+
+        <div class="space-y-4">
+            {% for file in files %}
+                <div class="flex items-center bg-white p-3 rounded-md shadow-sm">
+                    <input type="checkbox" name="selected_files" value="{{ file.name }}" class="mr-3">
+                    <span>{{ file.name }} ({{ file.type }}, {{ file.size|filesizeformat }})</span>
+                </div>
+            {% empty %}
+                <p class="text-center text-gray-500">Файлы не найдены</p>
+            {% endfor %}
+
+            {% if files %}<button type="submit" class="w-full bg-green-500 text-white py-2 rounded-md hover:bg-green-600">Скачать выбранные файлы</button>{% endif %}
+        </div>
+    </form>
+{% endblock content %}

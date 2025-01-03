@@ -1,0 +1,101 @@
+[tool.poetry]
+name = "ydiskhelper"
+version = "0.1.0"
+description = "[Test Assignment] A Django web application for viewing and downloading files from Yandex.Disk public links. Not intended for production use."
+authors = ["Andrei Satsevcih <andrei@satsevich.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+requests = "^2.32.3"
+django = "^5.1.4"
+django-environ = "^0.11.2"
+granian = "^1.7.3"
+whitenoise = "^6.8.2"
+
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.8.5"
+djlint = "^1.36.4"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+package-mode = false
+
+[tool.ruff]
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".ipynb_checkpoints",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pyenv",
+    ".pytest_cache",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    ".vscode",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "site-packages",
+    "venv",
+    "venvg",
+    "venv",
+]
+
+line-length = 150
+indent-width = 4
+show-fixes = true
+target-version = "py312"
+
+[tool.ruff.lint]
+# E: pycodestyle errors
+# F: Pyflakes-specific warnings and errors
+# I: Import conventions
+# W: pycodestyle warnings
+# Q: flake8-quotes errors
+# N: Naming conventions
+# B: Best practices
+# A: Anti-patterns
+# C4: Class-level design issues
+# T20: Type annotations
+# DJ: Django-specific rules
+# S: flake8-bandit
+# RUF: Ruff-specific rules
+# PD: pandas-vet
+# UP: pyupgrade
+select = ["E", "F", "I", "W", "Q", "N", "B", "A", "C4", "T20", "DJ", "S", "RUF", "PD", "UP"]
+
+ignore = ["D100","D101","D102","D103","D105","N806","E501", "DJ008", "DJ001", "RUF001", "RUF002", "RUF003", "RUF012"]
+
+[tool.ruff.lint.per-file-ignores]
+"*/migrations/*" = ["N806"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+
+[tool.djlint]
+ignore = "H006,H023,H030,H031"
+indent = 4
+preserve_blank_lines = true
+profile = "django"
+max_line_length = 12000
+max_attribute_length = 1000
+extension = "html"
+format_attribute_template_tags=true
+line_ending = "lf"

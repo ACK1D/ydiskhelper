@@ -1,0 +1,20 @@
+{% load static i18n %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+    <head>
+        <meta charset="UTF-8">
+        <title>YDiskHelper</title>
+        {% include "favicon.html" %}
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    <body class="bg-gray-100 min-h-screen flex flex-col items-center justify-center">
+        {% include "ydisk/components/oauth_button.html" %}
+        <div class="w-full max-w-md p-8 space-y-4 bg-white shadow-lg rounded-xl">
+            <a href="{% url 'public_link' %}">
+                <img src="{% static 'images/logo.png' %}" alt="Yandex Disk" class="w-full h-auto">
+            </a>
+            {% block content %}
+            {% endblock content %}
+        </div>
+    </body>
+</html>

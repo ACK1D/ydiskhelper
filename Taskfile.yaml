@@ -1,0 +1,60 @@
+version: '3'
+
+tasks:
+  check:
+    desc: "Check code with Ruff"
+    cmds:
+      - "poetry run ruff check ."
+      - "poetry run djlint . --lint --check"
+
+  format:
+    desc: "Run Ruff for fixing and formatting"
+    cmds:
+      - "poetry run ruff format ."
+      - "poetry run ruff check . --fix"
+      - "poetry run djlint . --reformat"
+
+  run:
+    desc: "Run application"
+    cmds:
+      - "poetry run python manage.py runserver"
+
+  run_docker:
+    desc: "Run application in docker"
+    cmds:
+      - "docker compose up --build -d"
+
+  makemigrations:
+    desc: "Create migrations based on model changes"
+    cmds:
+      - "poetry run python manage.py makemigrations"
+
+  migrate:
+    desc: "Apply database migrations"
+    cmds:
+      - "poetry run python manage.py migrate"
+
+  shell:
+    desc: "Run Django shell"
+    cmds:
+      - "poetry run python manage.py shell"
+
+  createsuperuser:
+    desc: "Create superuser"
+    cmds:
+      - "poetry run python manage.py createsuperuser"
+
+  test:
+    desc: "Run tests"
+    cmds:
+      - "poetry run python manage.py test"
+
+  export_requirements:
+    desc: "Export requirements.txt"
+    cmds:
+      - "poetry export -f requirements.txt --output requirements.txt"
+
+  export_requirements_dev:
+    desc: "Export requirements.txt for development"
+    cmds:
+      - "poetry export -f requirements.txt --output requirements-dev.txt --with dev"
