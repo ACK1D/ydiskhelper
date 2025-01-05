@@ -41,9 +41,11 @@ ENV DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE} \
     GRANIAN_MAX_CONNECTIONS=200
 
 RUN mkdir -p logs media staticfiles && \
-    addgroup --system app && \
-    adduser --system --ingroup app app && \
-    chown -R app:app ${APP_HOME}
+    addgroup --system --gid 1001 app && \
+    adduser --system --uid 1001 --gid 1001 --no-create-home app && \
+    chown -R app:app ${APP_HOME} && \
+    chmod -R 755 ${APP_HOME} && \
+    chmod 777 logs media staticfiles
 
 COPY --from=builder ${APP_HOME}/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
