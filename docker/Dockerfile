@@ -42,24 +42,17 @@ ENV DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE} \
 
 
 RUN addgroup --system --gid 1001 app && \
-    adduser --system --uid 1001 --gid 1001 --no-create-home app
-
-COPY --chown=app:app . .
-
-RUN mkdir -p ${APP_HOME}/logs ${APP_HOME}/media ${APP_HOME}/staticfiles && \
+    adduser --system --uid 1001 --gid 1001 --no-create-home app && \
+    mkdir -p ${APP_HOME}/{logs,media,staticfiles} && \
     chown -R app:app ${APP_HOME} && \
     chmod -R 755 ${APP_HOME} && \
-    chmod 777 ${APP_HOME}/logs ${APP_HOME}/media ${APP_HOME}/staticfiles && \
-    touch ${APP_HOME}/logs/debug.log ${APP_HOME}/logs/ydiskhelper.log && \
-    chmod 666 ${APP_HOME}/logs/debug.log ${APP_HOME}/logs/ydiskhelper.log && \
-    chown app:app ${APP_HOME}/logs/debug.log ${APP_HOME}/logs/ydiskhelper.log
+    chmod 777 ${APP_HOME}/{logs,media,staticfiles}
 
 COPY --from=builder ${APP_HOME}/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY --chown=app:app . .
-
 COPY --chmod=755 docker/entrypoint.sh /entrypoint.sh
+COPY --chown=app:app . .
 
 USER app
 

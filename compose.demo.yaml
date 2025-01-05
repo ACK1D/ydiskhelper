@@ -7,21 +7,9 @@ services:
     expose:
       - 8000
     volumes:
-      - type: bind
-        source: ./logs
-        target: /ydiskhelper/logs
-        volume:
-          nocopy: true
-      - type: bind
-        source: ./media
-        target: /ydiskhelper/media
-        volume:
-          nocopy: true
-      - type: bind
-        source: ./staticfiles
-        target: /ydiskhelper/staticfiles
-        volume:
-          nocopy: true
+      - ./logs:/ydiskhelper/logs
+      - ./media:/ydiskhelper/media
+      - ./staticfiles:/ydiskhelper/staticfiles
     user: "1001:1001"
     env_file:
       - .env
