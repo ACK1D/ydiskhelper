@@ -1,6 +1,5 @@
 #!/bin/bash
-
-mkdir -p logs staticfiles media
+set -e
 
 python manage.py migrate --noinput
 python manage.py collectstatic --noinput
@@ -8,6 +7,6 @@ python manage.py collectstatic --noinput
 exec granian --interface wsgi \
     --host 0.0.0.0 \
     --port 8000 \
-    --workers $GRANIAN_WORKERS \
-    --threads $GRANIAN_THREADS \
+    --workers ${GRANIAN_WORKERS:-2} \
+    --threads ${GRANIAN_THREADS:-1} \
     ydiskhelper.wsgi:application 

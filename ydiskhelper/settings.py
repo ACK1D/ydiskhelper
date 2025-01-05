@@ -45,7 +45,6 @@ CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS")
 CSRF_USE_SESSIONS = True
 
 
-
 # Application definition
 
 INSTALLED_APPS = [

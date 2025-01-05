@@ -1,46 +1,58 @@
 # syntax=docker/dockerfile:1
 
-# Stage 1: Build dependencies
-FROM python:3.12-slim-bookworm AS build
+ARG PYTHON_VERSION=3.12-slim-bookworm
+ARG POETRY_VERSION=2.0.0
+ARG APP_HOME=/ydiskhelper
+ARG DJANGO_SETTINGS_MODULE=ydiskhelper.settings
+
+# Stage 1: Base image with common settings
+FROM python:${PYTHON_VERSION} AS base
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONHASHSEED=random \
-    PIP_DISABLE_PIP_VERSION_CHECK=on \
     PIP_NO_CACHE_DIR=on \
-    PIP_DEFAULT_TIMEOUT=100 \
-    POETRY_VERSION=1.8.5 \
-    POETRY_NO_INTERACTION=1 \
-    POETRY_VIRTUALENVS_CREATE=false \
-    POETRY_CACHE_DIR=/var/cache/pypoetry \
-    VIRTUAL_ENV=".venv"
+    PIP_DISABLE_PIP_VERSION_CHECK=on \
+    PIP_DEFAULT_TIMEOUT=100
 
-WORKDIR /ydiskhelper
+ARG APP_HOME
+WORKDIR ${APP_HOME}
+
+# Stage 2: Build dependencies
+FROM base AS builder
+
+ARG POETRY_VERSION
+ENV POETRY_VERSION=${POETRY_VERSION} \
+    POETRY_NO_INTERACTION=1 \
+    POETRY_VIRTUALENVS_CREATE=false
 
 COPY poetry.lock pyproject.toml ./
-RUN pip install "poetry==$POETRY_VERSION" && \
-    python -m venv $VIRTUAL_ENV && \
-    poetry export --without-hashes --without dev --format requirements.txt --output requirements.txt
+RUN pip install --no-cache-dir "poetry==$POETRY_VERSION" && \
+    poetry self add poetry-plugin-export && \
+    poetry export --without-hashes --without dev -f requirements.txt -o requirements.txt
 
-# Stage 2: Final image
-FROM python:3.12-slim-bookworm AS final
+# Stage 3: Final image
+FROM base AS final
 
-ENV PYTHONUNBUFFERED=1 \
-    PYTHONDONTWRITEBYTECODE=1 \
-    DJANGO_SETTINGS_MODULE=ydiskhelper.settings \
+ARG DJANGO_SETTINGS_MODULE
+ENV DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE} \
     GRANIAN_WORKERS=2 \
     GRANIAN_THREADS=1 \
     GRANIAN_MAX_CONNECTIONS=200
 
-WORKDIR /ydiskhelper
+RUN mkdir -p logs media staticfiles && \
+    addgroup --system app && \
+    adduser --system --ingroup app app && \
+    chown -R app:app ${APP_HOME}
 
-COPY --from=build /ydiskhelper/requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt granian
+COPY --from=builder ${APP_HOME}/requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . .
+COPY --chown=app:app . .
 
-COPY docker/entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+COPY --chmod=755 docker/entrypoint.sh /entrypoint.sh
+
+USER app
 
 EXPOSE 8000
 ENTRYPOINT ["/entrypoint.sh"]
