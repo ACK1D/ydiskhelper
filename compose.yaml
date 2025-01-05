@@ -12,6 +12,5 @@ services:
       - ./logs:/ydiskhelper/logs
       - ./media:/ydiskhelper/media
       - ./staticfiles:/ydiskhelper/staticfiles
-    user: "1001:1001"
     env_file:
       - .env

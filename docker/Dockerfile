@@ -40,21 +40,11 @@ ENV DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE} \
     GRANIAN_THREADS=1 \
     GRANIAN_MAX_CONNECTIONS=200
 
-
-RUN addgroup --system --gid 1001 app && \
-    adduser --system --uid 1001 --gid 1001 --no-create-home app && \
-    mkdir -p ${APP_HOME}/{logs,media,staticfiles} && \
-    chown -R app:app ${APP_HOME} && \
-    chmod -R 755 ${APP_HOME} && \
-    chmod 777 ${APP_HOME}/{logs,media,staticfiles}
-
 COPY --from=builder ${APP_HOME}/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY --chmod=755 docker/entrypoint.sh /entrypoint.sh
-COPY --chown=app:app . .
-
-USER app
+COPY docker/entrypoint.sh /entrypoint.sh
+COPY . .
 
 EXPOSE 8000
 ENTRYPOINT ["/entrypoint.sh"]

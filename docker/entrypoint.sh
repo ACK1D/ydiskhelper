@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+mkdir -p logs media staticfiles
+
 python manage.py migrate --noinput
 python manage.py collectstatic --noinput
 
