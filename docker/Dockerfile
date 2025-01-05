@@ -49,7 +49,10 @@ COPY --chown=app:app . .
 RUN mkdir -p ${APP_HOME}/logs ${APP_HOME}/media ${APP_HOME}/staticfiles && \
     chown -R app:app ${APP_HOME} && \
     chmod -R 755 ${APP_HOME} && \
-    chmod 777 logs media staticfiles
+    chmod 777 ${APP_HOME}/logs ${APP_HOME}/media ${APP_HOME}/staticfiles && \
+    touch ${APP_HOME}/logs/debug.log ${APP_HOME}/logs/ydiskhelper.log && \
+    chmod 666 ${APP_HOME}/logs/debug.log ${APP_HOME}/logs/ydiskhelper.log && \
+    chown app:app ${APP_HOME}/logs/debug.log ${APP_HOME}/logs/ydiskhelper.log
 
 COPY --from=builder ${APP_HOME}/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
