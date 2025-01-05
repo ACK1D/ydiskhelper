@@ -40,9 +40,13 @@ ENV DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE} \
     GRANIAN_THREADS=1 \
     GRANIAN_MAX_CONNECTIONS=200
 
-RUN mkdir -p logs media staticfiles && \
-    addgroup --system --gid 1001 app && \
-    adduser --system --uid 1001 --gid 1001 --no-create-home app && \
+
+RUN addgroup --system --gid 1001 app && \
+    adduser --system --uid 1001 --gid 1001 --no-create-home app
+
+COPY --chown=app:app . .
+
+RUN mkdir -p ${APP_HOME}/logs ${APP_HOME}/media ${APP_HOME}/staticfiles && \
     chown -R app:app ${APP_HOME} && \
     chmod -R 755 ${APP_HOME} && \
     chmod 777 logs media staticfiles
